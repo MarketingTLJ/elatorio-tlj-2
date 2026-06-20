@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Relatório Comercial — Grupo TLJ | Mar–Jun 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --brand-blue:#213761;--brand-blue-mid:#2a4a82;--brand-blue-light:#3374B5;
+  --brand-red:#E31E24;--brand-red-dark:#b81519;
+  --surface-dark:#f4f6f9;--surface-card:#ffffff;--surface-hover:#eef2f7;--surface-border:#dde3ec;
+  --c-google:#3374B5;--c-facebook:#1877F2;--c-whatsapp:#25D366;--c-impl:#8b5cf6;
+  --c-form:#06b6d4;--c-jotform:#f59e0b;--c-youtube:#ff0000;--c-outros:#94a3b8;
+  --c-ganho:#22c55e;--c-perdido:#E31E24;--c-aberto:#64748b;--c-warn:#f97316;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--surface-dark);color:#1e293b;font-size:15px}
+
+/* HEADER */
+.hdr{background:rgba(33,55,97,.97);backdrop-filter:blur(12px);position:sticky;top:0;z-index:200;
+  padding:0 28px;display:flex;align-items:center;gap:24px;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+.hdr-brand{display:flex;align-items:center;gap:10px;padding:14px 0;flex-shrink:0}
+.hdr-logo{width:34px;height:34px;border-radius:7px;background:var(--brand-red);
+  display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff}
+.hdr-title{color:#fff;font-weight:700;font-size:15px;line-height:1.2}
+.hdr-title span{display:block;font-size:10px;font-weight:400;color:rgba(255,255,255,.5);margin-top:2px}
+.hdr-tabs{display:flex;gap:3px}
+.tab-btn{padding:7px 16px;border-radius:7px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  color:rgba(255,255,255,.5);background:transparent;transition:all .15s;white-space:nowrap}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,.1)}
+.tab-btn.active{background:var(--brand-red);color:#fff}
+.hdr-badge{margin-left:auto;font-size:11px;font-weight:500;color:rgba(255,255,255,.35);white-space:nowrap}
+
+/* FILTER BAR */
+.filter-bar{background:rgba(255,255,255,.96);border-bottom:1px solid var(--surface-border);
+  position:sticky;top:63px;z-index:100;padding:10px 28px;
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.filter-group{display:flex;align-items:center;gap:8px}
+.filter-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:#64748b;white-space:nowrap}
+.filter-pills{display:flex;gap:4px;flex-wrap:wrap}
+.fpill{padding:4px 11px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;
+  border:1.5px solid var(--surface-border);background:var(--surface-card);color:#475569;
+  transition:all .15s;user-select:none}
+.fpill:hover{border-color:var(--brand-blue-light);color:var(--brand-blue-light)}
+.fpill.sel-criado{background:var(--brand-blue);border-color:var(--brand-blue);color:#fff}
+.fpill.sel-termino{background:#0e7490;border-color:#0e7490;color:#fff}
+.fpill.sel-fonte{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.filter-sep{width:1px;height:28px;background:var(--surface-border)}
+.filter-clear{font-size:11px;color:#94a3b8;cursor:pointer;text-decoration:underline;margin-left:4px}
+.filter-clear:hover{color:var(--brand-red)}
+
+/* MAIN */
+.tab-panel{display:none;padding:24px 28px 48px;max-width:1300px;margin:0 auto}
+.tab-panel.active{display:block}
+
+/* SECTION */
+.sec{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#64748b}
+.sec-line{flex:1;height:1px;background:var(--surface-border)}
+.mb6{margin-bottom:24px}
+.mt4{margin-top:16px}
+
+/* KPI GRID */
+.kpi-grid{display:grid;gap:14px;margin-bottom:24px}
+.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}.g6{grid-template-columns:repeat(6,1fr)}
+.kpi{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:14px;padding:18px}
+.kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:7px}
+.kpi-val{font-size:26px;font-weight:800;line-height:1.1;color:var(--brand-blue);font-variant-numeric:tabular-nums}
+.kpi-val.red{color:var(--brand-red)}.kpi-val.green{color:#16a34a}.kpi-val.warn{color:var(--c-warn)}
+.kpi-val.slate{color:#475569}
+.kpi-sub{font-size:12px;color:#64748b;margin-top:5px}
+
+/* CHART CARD */
+.cc{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:14px;padding:18px 22px}
+.cc-title{font-size:13px;font-weight:700;color:#334155;margin-bottom:14px}
+.cc-note{font-size:11px;color:#94a3b8;margin-top:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.grid65{display:grid;grid-template-columns:1.8fr 1fr;gap:18px}
+
+/* TABLE */
+.tc{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:14px;overflow:hidden}
+.tc table{width:100%;border-collapse:collapse}
+.tc thead th{background:#f8fafc;border-bottom:1px solid var(--surface-border);
+  padding:9px 13px;text-align:left;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#64748b}
+.tc thead th.r{text-align:right}
+.tc tbody tr{border-bottom:1px solid #f1f5f9}
+.tc tbody tr:last-child{border-bottom:none}
+.tc tbody tr:hover{background:var(--surface-hover)}
+.tc tbody td{padding:10px 13px;font-size:13px;color:#334155}
+.tc tbody td.r{text-align:right;font-variant-numeric:tabular-nums}
+.tc tbody td.b{font-weight:700}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+.bg{background:#dcfce7;color:#15803d}.br{background:#fee2e2;color:#b91c1c}
+.bo{background:#ffedd5;color:#c2410c}.bb{background:#dbeafe;color:#1d4ed8}
+.bgy{background:#f1f5f9;color:#475569}
+
+/* ALERTS */
+.alert{border-radius:11px;padding:13px 16px;margin-bottom:18px;display:flex;gap:11px;
+  align-items:flex-start;font-size:13px;line-height:1.55}
+.alert-r{background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d}
+.alert-o{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12}
+.alert-b{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a5f}
+.alert-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+
+/* DOTS */
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+/* MOTIVOS */
+.mbar{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.mlbl{font-size:12px;color:#475569;width:210px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mtrack{flex:1;height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden}
+.mfill{height:100%;border-radius:99px}
+.mcount{font-size:12px;font-weight:700;color:#334155;width:26px;text-align:right}
+
+/* FILTRO ATIVO INDICATOR */
+.filter-active-note{
+  font-size:11px;color:#0e7490;font-weight:600;
+  background:#ecfeff;border:1px solid #a5f3fc;border-radius:8px;
+  padding:4px 10px;display:none
+}
+.filter-active-note.show{display:inline-block}
+
+@media(max-width:900px){
+  .tab-panel{padding:14px}.g4,.g5,.g6{grid-template-columns:repeat(2,1fr)}
+  .grid2,.grid3,.grid65{grid-template-columns:1fr}
+  .hdr{gap:14px;padding:0 14px}.filter-bar{padding:8px 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-logo">TLJ</div>
+    <div class="hdr-title">Grupo TLJ <span>Relatório Comercial · Mar–Jun/2026</span></div>
+  </div>
+  <nav class="hdr-tabs">
+    <button class="tab-btn active" onclick="showTab('geral',this)">Visão Geral</button>
+    <button class="tab-btn" onclick="showTab('sdr',this)">Pipeline SDR</button>
+    <button class="tab-btn" onclick="showTab('closer',this)">Pipeline Closer</button>
+    <button class="tab-btn" onclick="showTab('invest',this)">Investimentos</button>
+  </nav>
+  <div class="hdr-badge">CRM · 20/06/2026</div>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-group">
+    <span class="filter-label">Criado em</span>
+    <div class="filter-pills" id="pillsCriado"></div>
+  </div>
+  <div class="filter-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Data de Término</span>
+    <div class="filter-pills" id="pillsTermino"></div>
+  </div>
+  <div class="filter-sep"></div>
+  <div class="filter-group">
+    <span class="filter-label">Fonte</span>
+    <div class="filter-pills" id="pillsFonte"></div>
+  </div>
+  <div class="filter-sep"></div>
+  <span class="filter-clear" onclick="resetFilters()">Limpar filtros</span>
+  <span class="filter-active-note" id="filterNote">Filtros ativos</span>
+</div>
+
+<!-- ═══ TAB: VISÃO GERAL ══════════════════════════════════ -->
+<div id="tab-geral" class="tab-panel active">
+  <div class="alert alert-r" id="alertGeral"></div>
+
+  <div class="sec mb6"><span class="sec-title">Resumo do Período</span><div class="sec-line"></div></div>
+  <div class="kpi-grid g5 mb6">
+    <div class="kpi"><div class="kpi-lbl">Leads SDR</div><div class="kpi-val" id="kLeadsSdr">—</div><div class="kpi-sub">Período selecionado</div></div>
+    <div class="kpi"><div class="kpi-lbl">Reuniões</div><div class="kpi-val" style="color:var(--brand-blue-light)" id="kMeetings">—</div><div class="kpi-sub">Leads criados no Closer</div></div>
+    <div class="kpi"><div class="kpi-lbl">Taxa Conv. Reunião</div><div class="kpi-val" id="kTxReuniao">—</div><div class="kpi-sub">Reuniões ÷ Leads SDR</div></div>
+    <div class="kpi"><div class="kpi-lbl">Ganhos Fechados</div><div class="kpi-val green" id="kGanhos">—</div><div class="kpi-sub">Por data de término</div></div>
+    <div class="kpi"><div class="kpi-lbl">Investimento</div><div class="kpi-val slate" id="kInv">—</div><div class="kpi-sub">Por período de término</div></div>
+  </div>
+
+  <div class="grid2 mb6">
+    <div class="cc">
+      <div class="cc-title">Leads SDR vs Reuniões por Mês</div>
+      <canvas id="chartVol" height="220"></canvas>
+      <div class="cc-note" id="noteVol"></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Taxa de Conversão em Reunião (%)</div>
+      <canvas id="chartTx" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="sec mb6"><span class="sec-title">Qualidade por Fonte</span><div class="sec-line"></div></div>
+  <div class="cc mb6">
+    <div class="cc-title">Taxa de Conversão em Reunião por Fonte</div>
+    <canvas id="chartFonteConv" height="160"></canvas>
+    <div class="cc-note">Reuniões ÷ Leads SDR por fonte (fonte = criado; meses de "Criado em" selecionados)</div>
+  </div>
+
+  <div class="tc" id="tableGeralFonte"></div>
+</div>
+
+<!-- ═══ TAB: SDR ═════════════════════════════════════════ -->
+<div id="tab-sdr" class="tab-panel">
+  <div class="alert alert-o" id="alertSdr"></div>
+
+  <div class="kpi-grid g4 mb6">
+    <div class="kpi"><div class="kpi-lbl">Total Leads SDR</div><div class="kpi-val" id="sLeads">—</div><div class="kpi-sub">Criados no período</div></div>
+    <div class="kpi"><div class="kpi-lbl">Perdidos / Nutrição</div><div class="kpi-val red" id="sPerdido">—</div><div class="kpi-sub" id="sPerdidoPct">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">Em Processo</div><div class="kpi-val warn" id="sAtivo">—</div><div class="kpi-sub">Leads ativos SDR</div></div>
+    <div class="kpi"><div class="kpi-lbl">Reuniões Geradas</div><div class="kpi-val" style="color:var(--brand-blue-light)" id="sMtgs">—</div><div class="kpi-sub" id="sMtgsPct">— conv. reunião</div></div>
+  </div>
+
+  <div class="grid2 mb6">
+    <div class="cc">
+      <div class="cc-title">Volume SDR por Mês e Fonte</div>
+      <canvas id="chartSdrStack" height="260"></canvas>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Mix de Fontes por Mês (%)</div>
+      <canvas id="chartSdrMix" height="260"></canvas>
+    </div>
+  </div>
+
+  <div class="sec mb6"><span class="sec-title">SDR por Fonte</span><div class="sec-line"></div></div>
+  <div class="tc mb6" id="tableSdrFonte"></div>
+
+  <div class="sec mb6"><span class="sec-title">Motivos de Perda</span><div class="sec-line"></div></div>
+  <div class="grid65 mb6">
+    <div class="cc">
+      <div class="cc-title">Top Motivos — Geral</div>
+      <div id="motivosGeral"></div>
+    </div>
+    <div class="kpi" style="background:var(--surface-card);border:1px solid var(--surface-border)">
+      <div class="kpi-lbl">Análise</div>
+      <div style="font-size:13px;color:#334155;line-height:1.65;margin-top:8px">
+        <p style="margin-bottom:9px"><strong style="color:#b91c1c">"Sem Contato"</strong> representa a maioria das perdas — velocidade ou qualidade de lead.</p>
+        <p style="margin-bottom:9px"><strong>Testes</strong> contaminam métricas e devem ser excluídos.</p>
+        <p style="margin-bottom:9px"><strong>Cards Duplicados</strong> = retrabalho operacional.</p>
+        <p><strong>Dados incorretos</strong> indica problema de formulário ou segmentação.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="cc"><div class="cc-title" style="display:flex;align-items:center;gap:7px"><span class="dot" style="background:var(--c-google);width:10px;height:10px"></span>Google Ads</div><div id="mGoogle"></div></div>
+    <div class="cc"><div class="cc-title" style="display:flex;align-items:center;gap:7px"><span class="dot" style="background:var(--c-facebook);width:10px;height:10px"></span>Facebook Ads</div><div id="mFacebook"></div></div>
+  </div>
+  <div class="grid2 mt4">
+    <div class="cc"><div class="cc-title" style="display:flex;align-items:center;gap:7px"><span class="dot" style="background:var(--c-whatsapp);width:10px;height:10px"></span>WhatsApp TLJ</div><div id="mWhatsapp"></div></div>
+    <div class="cc"><div class="cc-title" style="display:flex;align-items:center;gap:7px"><span class="dot" style="background:var(--c-impl);width:10px;height:10px"></span>Implementation App</div><div id="mImpl"></div></div>
+  </div>
+</div>
+
+<!-- ═══ TAB: CLOSER ══════════════════════════════════════ -->
+<div id="tab-closer" class="tab-panel">
+  <div class="alert alert-b">
+    <span class="alert-icon">💡</span>
+    <div>Leads no Closer <em>já realizaram reunião</em>. <strong>Filtro "Criado em"</strong> controla quais reuniões aparecem nos gráficos de distribuição. <strong>Filtro "Data de Término"</strong> controla os ganhos/perdidos fechados.</div>
+  </div>
+
+  <div class="kpi-grid g5 mb6">
+    <div class="kpi"><div class="kpi-lbl">Reuniões</div><div class="kpi-val" style="color:var(--brand-blue-light)" id="cMtgs">—</div><div class="kpi-sub">Criadas no período</div></div>
+    <div class="kpi"><div class="kpi-lbl">Ganhos</div><div class="kpi-val green" id="cGanhos">—</div><div class="kpi-sub" id="cGanhosPct">— das reuniões</div></div>
+    <div class="kpi"><div class="kpi-lbl">Perdidos</div><div class="kpi-val red" id="cPerdidos">—</div><div class="kpi-sub">Por data de término</div></div>
+    <div class="kpi"><div class="kpi-lbl">Em Aberto</div><div class="kpi-val slate" id="cAberto">30</div><div class="kpi-sub">Estado atual</div></div>
+    <div class="kpi"><div class="kpi-lbl">Taxa de Fechamento</div><div class="kpi-val warn" id="cTxFech">—</div><div class="kpi-sub">Ganhos ÷ (G+P)</div></div>
+  </div>
+
+  <div class="grid2 mb6">
+    <div class="cc">
+      <div class="cc-title">Reuniões por Mês e Fonte</div>
+      <canvas id="chartCloserStack" height="260"></canvas>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Ganhos vs Perdidos por Mês (Data de Término)</div>
+      <canvas id="chartGP" height="260"></canvas>
+    </div>
+  </div>
+
+  <div class="sec mb6"><span class="sec-title">Conversão por Fonte no Closer</span><div class="sec-line"></div></div>
+  <div class="tc mb6" id="tableCloserFonte"></div>
+
+  <div class="alert alert-o">
+    <span class="alert-icon">🔍</span>
+    <div id="alertCloserDestaques"></div>
+  </div>
+</div>
+
+<!-- ═══ TAB: INVESTIMENTOS ═══════════════════════════════ -->
+<div id="tab-invest" class="tab-panel">
+  <div class="sec mb6"><span class="sec-title">Eficiência do Investimento</span><div class="sec-line"></div></div>
+  <div class="kpi-grid g4 mb6">
+    <div class="kpi"><div class="kpi-lbl">Investimento Total</div><div class="kpi-val" id="iInv">—</div><div class="kpi-sub">Período de término selecionado</div></div>
+    <div class="kpi"><div class="kpi-lbl">CPL Médio</div><div class="kpi-val warn" id="iCpl">—</div><div class="kpi-sub">Inv ÷ Leads SDR</div></div>
+    <div class="kpi"><div class="kpi-lbl">Custo / Reunião</div><div class="kpi-val red" id="iCpM">—</div><div class="kpi-sub">Inv ÷ Reuniões</div></div>
+    <div class="kpi"><div class="kpi-lbl">Custo / Venda</div><div class="kpi-val red" id="iCpS">—</div><div class="kpi-sub">Inv ÷ Ganhos</div></div>
+  </div>
+
+  <div class="grid2 mb6">
+    <div class="cc">
+      <div class="cc-title">Investimento por Fonte Paga — Mensal</div>
+      <canvas id="chartInvFonte" height="240"></canvas>
+    </div>
+    <div class="cc">
+      <div class="cc-title">CPL e Custo por Reunião — Evolução</div>
+      <canvas id="chartCustos" height="240"></canvas>
+    </div>
+  </div>
+
+  <div class="sec mb6"><span class="sec-title">Eficiência Mensal</span><div class="sec-line"></div></div>
+  <div class="tc mb6" id="tableInvMes"></div>
+
+  <div class="sec mb6"><span class="sec-title">Google Ads — Detalhamento</span><div class="sec-line"></div></div>
+  <div class="tc mb6" id="tableInvGoogle"></div>
+
+  <div class="sec mb6"><span class="sec-title">Facebook / Meta Ads — Detalhamento</span><div class="sec-line"></div></div>
+  <div class="tc mb6" id="tableInvFacebook"></div>
+</div>
+
+<script>
+// ═══ DATA ═══════════════════════════════════════════════
+const RAW = {"months": ["2026-03", "2026-04", "2026-05", "2026-06"], "labels": {"2026-03": "Mar/26", "2026-04": "Abr/26", "2026-05": "Mai/26", "2026-06": "Jun/26"}, "fontes": ["Google Ads", "Facebook Ads", "WhatsApp TLJ", "Implementation App", "JotForm", "YouTube Ads", "Formulário Site", "Outros"], "DATA_CRIADO": {"2026-03": {"label": "Mar/26", "leads_sdr": 174, "leads_by_fonte": {"Facebook Ads": 2, "Formulário Site": 2, "Google Ads": 113, "Implementation App": 22, "JotForm": 2, "Outros": 27, "YouTube Ads": 6}, "meetings": 54, "meetings_by_fonte": {"Formulário Site": 3, "Google Ads": 32, "Implementation App": 7, "Outros": 11, "YouTube Ads": 1}, "sdr_perdido": 174, "sdr_ativo": 0, "perdido_by_fonte": {"Facebook Ads": 2, "Formulário Site": 2, "Google Ads": 113, "Implementation App": 22, "JotForm": 2, "Outros": 27, "YouTube Ads": 6}, "motivos_geral": {"Sem Contato / Sem Resposta": 58, "Sem contato / Não retorna": 27, "Dados incorretos / Impossível contato": 26, "Testes / Base de Teste": 17, "Já é cliente / Suporte": 9, "Sem interesse nos serviços": 9, "Contratou concorrente": 6, "Achou caro": 4, "Lead Desqualificado": 4, "Card Duplicado": 4, "Só Informações": 3, "Não vai fechar agora": 2}, "motivos_by_fonte": {"Google Ads": {"Sem Contato / Sem Resposta": 40, "Dados incorretos / Impossível contato": 25, "Sem contato / Não retorna": 19, "Sem interesse nos serviços": 8, "Testes / Base de Teste": 7, "Achou caro": 3}, "Facebook Ads": {"Lead Desqualificado": 1, "Sem contato / Não retorna": 1}, "WhatsApp TLJ": {}, "Implementation App": {"Sem Contato / Sem Resposta": 8, "Contratou concorrente": 5, "Já é cliente / Suporte": 3, "Sem contato / Não retorna": 3, "Card Duplicado": 2, "Sem interesse nos serviços": 1}}}, "2026-04": {"label": "Abr/26", "leads_sdr": 110, "leads_by_fonte": {"Formulário Site": 4, "Google Ads": 60, "Implementation App": 20, "JotForm": 17, "Outros": 8, "YouTube Ads": 1}, "meetings": 29, "meetings_by_fonte": {"Facebook Ads": 1, "Formulário Site": 2, "Google Ads": 14, "Implementation App": 6, "JotForm": 4, "Outros": 2}, "sdr_perdido": 110, "sdr_ativo": 0, "perdido_by_fonte": {"Formulário Site": 4, "Google Ads": 60, "Implementation App": 20, "JotForm": 17, "Outros": 8, "YouTube Ads": 1}, "motivos_geral": {"Sem contato / Não retorna": 31, "Sem Contato / Sem Resposta": 26, "Testes / Base de Teste": 19, "Lead Desqualificado": 8, "Sem interesse nos serviços": 5, "Achou caro": 4, "Contratou concorrente": 3, "Já é cliente / Suporte": 3, "Fechou com outro CRM": 3, "Só Informações": 2, "Sistema não atendeu": 2, "Dados incorretos / Impossível contato": 1}, "motivos_by_fonte": {"Google Ads": {"Sem Contato / Sem Resposta": 22, "Sem contato / Não retorna": 20, "Lead Desqualificado": 5, "Testes / Base de Teste": 4, "Sem interesse nos serviços": 2, "Fechou com outro CRM": 2}, "Facebook Ads": {}, "WhatsApp TLJ": {}, "Implementation App": {"Sem contato / Não retorna": 4, "Sem interesse nos serviços": 3, "Sem Contato / Sem Resposta": 3, "Contratou concorrente": 2, "Já é cliente / Suporte": 2, "Achou caro": 2}}}, "2026-05": {"label": "Mai/26", "leads_sdr": 205, "leads_by_fonte": {"Facebook Ads": 54, "Formulário Site": 4, "Google Ads": 46, "Implementation App": 50, "JotForm": 5, "Outros": 44, "YouTube Ads": 2}, "meetings": 20, "meetings_by_fonte": {"Facebook Ads": 1, "Formulário Site": 3, "Google Ads": 7, "Implementation App": 5, "Outros": 4}, "sdr_perdido": 199, "sdr_ativo": 6, "perdido_by_fonte": {"Facebook Ads": 54, "Formulário Site": 3, "Google Ads": 45, "Implementation App": 48, "JotForm": 5, "Outros": 43, "YouTube Ads": 1}, "motivos_geral": {"Sem Contato / Sem Resposta": 63, "Sem contato / Não retorna": 35, "Lead Desqualificado": 23, "Sem interesse nos serviços": 20, "Card Duplicado": 13, "Testes / Base de Teste": 10, "Achou caro": 9, "Só Informações": 6, "Não vai fechar agora": 5, "Dados incorretos / Impossível contato": 5, "Fechou com outro CRM": 4, "Já é cliente / Suporte": 3}, "motivos_by_fonte": {"Google Ads": {"Sem contato / Não retorna": 13, "Sem Contato / Sem Resposta": 10, "Achou caro": 5, "Lead Desqualificado": 4, "Sem interesse nos serviços": 4, "Só Informações": 2}, "Facebook Ads": {"Sem Contato / Sem Resposta": 34, "Sem interesse nos serviços": 5, "Sem contato / Não retorna": 3, "Lead Desqualificado": 3, "Card Duplicado": 3, "Dados incorretos / Impossível contato": 2}, "WhatsApp TLJ": {}, "Implementation App": {"Sem contato / Não retorna": 11, "Sem interesse nos serviços": 10, "Sem Contato / Sem Resposta": 9, "Não vai fechar agora": 3, "Só Informações": 3, "Já é cliente / Suporte": 2}}}, "2026-06": {"label": "Jun/26", "leads_sdr": 274, "leads_by_fonte": {"Facebook Ads": 112, "Formulário Site": 4, "Google Ads": 50, "Implementation App": 18, "JotForm": 1, "Outros": 83, "YouTube Ads": 6}, "meetings": 12, "meetings_by_fonte": {"Facebook Ads": 5, "Formulário Site": 2, "Google Ads": 2, "Implementation App": 1, "Outros": 2}, "sdr_perdido": 257, "sdr_ativo": 17, "perdido_by_fonte": {"Facebook Ads": 105, "Formulário Site": 4, "Google Ads": 45, "Implementation App": 16, "JotForm": 1, "Outros": 81, "YouTube Ads": 5}, "motivos_geral": {"Sem Contato / Sem Resposta": 112, "Lead Desqualificado": 31, "Sem contato / Não retorna": 25, "Card Duplicado": 20, "Sem interesse nos serviços": 20, "Dados incorretos / Impossível contato": 19, "Testes / Base de Teste": 11, "Não vai fechar agora": 9, "Só Informações": 4, "Desistência": 2, "Achou caro": 2, "Já é cliente / Suporte": 2}, "motivos_by_fonte": {"Google Ads": {"Testes / Base de Teste": 9, "Sem Contato / Sem Resposta": 9, "Sem interesse nos serviços": 7, "Dados incorretos / Impossível contato": 6, "Lead Desqualificado": 5, "Sem contato / Não retorna": 4}, "Facebook Ads": {"Sem Contato / Sem Resposta": 72, "Sem contato / Não retorna": 12, "Lead Desqualificado": 6, "Dados incorretos / Impossível contato": 5, "Não vai fechar agora": 3, "Sem interesse nos serviços": 3}, "WhatsApp TLJ": {}, "Implementation App": {"Sem Contato / Sem Resposta": 9, "Dados incorretos / Impossível contato": 2, "Não vai fechar agora": 2, "Sem contato / Não retorna": 2, "Card Duplicado": 1, "Sem interesse nos serviços": 1}}}}, "DATA_TERMINO": {"2026-03": {"label": "Mar/26", "ganhos": 2, "perdidos": 16, "ganhos_by_fonte": {"Google Ads": 2}, "perdidos_by_fonte": {"Google Ads": 11, "Outros": 5}, "inv_total": 13153.68, "inv_google": 9684.76, "inv_facebook": 2590.6, "inv_whatsapp": 878.32}, "2026-04": {"label": "Abr/26", "ganhos": 5, "perdidos": 11, "ganhos_by_fonte": {"Google Ads": 5}, "perdidos_by_fonte": {"Formulário Site": 1, "Google Ads": 4, "Implementation App": 1, "Outros": 4, "YouTube Ads": 1}, "inv_total": 8584.3, "inv_google": 7084.85, "inv_facebook": 1407.55, "inv_whatsapp": 91.9}, "2026-05": {"label": "Mai/26", "ganhos": 6, "perdidos": 29, "ganhos_by_fonte": {"Facebook Ads": 1, "Google Ads": 3, "Implementation App": 2}, "perdidos_by_fonte": {"Formulário Site": 3, "Google Ads": 15, "Implementation App": 8, "JotForm": 1, "Outros": 2}, "inv_total": 8327.27, "inv_google": 4819.89, "inv_facebook": 3234.44, "inv_whatsapp": 272.94}, "2026-06": {"label": "Jun/26", "ganhos": 2, "perdidos": 14, "ganhos_by_fonte": {"Facebook Ads": 2}, "perdidos_by_fonte": {"Facebook Ads": 1, "Formulário Site": 3, "Google Ads": 5, "Implementation App": 2, "Outros": 3}, "inv_total": 13818.12, "inv_google": 7693.07, "inv_facebook": 6110.05, "inv_whatsapp": 15.0}}, "EM_ABERTO": {"Facebook Ads": 3, "Formulário Site": 3, "Google Ads": 10, "Implementation App": 6, "JotForm": 3, "Outros": 5}};
+
+const MONTHS   = RAW.months;
+const LABELS   = RAW.labels;
+const DC       = RAW.DATA_CRIADO;
+const DT       = RAW.DATA_TERMINO;
+const EM_AB    = RAW.EM_ABERTO;
+
+const FONTES = ["Google Ads","Facebook Ads","WhatsApp TLJ","Implementation App","JotForm","YouTube Ads","Formulário Site","Outros"];
+const FCOL   = {
+  "Google Ads":"#3374B5","Facebook Ads":"#1877F2","WhatsApp TLJ":"#25D366",
+  "Implementation App":"#8b5cf6","JotForm":"#f59e0b","YouTube Ads":"#ef4444",
+  "Formulário Site":"#06b6d4","Outros":"#94a3b8"
+};
+
+// ═══ FILTER STATE ════════════════════════════════════════
+let selCriado  = [...MONTHS];
+let selTermino = [...MONTHS];
+let selFontes  = [...FONTES];
+
+const FONTE_LABELS = {
+  "Google Ads":"Google","Facebook Ads":"Facebook","WhatsApp TLJ":"WhatsApp",
+  "Implementation App":"Impl. App","JotForm":"JotForm","YouTube Ads":"YouTube",
+  "Formulário Site":"Form. Site","Outros":"Outros"
+};
+const FONTE_INV_MAP = {
+  "Google Ads":"inv_google","Facebook Ads":"inv_facebook","WhatsApp TLJ":"inv_whatsapp"
+};
+
+// ═══ CHART INSTANCES ═════════════════════════════════════
+let charts = {};
+function destroyChart(id){ if(charts[id]){charts[id].destroy();delete charts[id];} }
+
+// ═══ UTILS ═══════════════════════════════════════════════
+const fmtR  = v => v==null ? '—' : 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtRK = v => v==null ? '—' : 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+const pct   = (a,b) => b>0 ? (a/b*100).toFixed(1)+'%' : '—';
+const pctN  = (a,b) => b>0 ? parseFloat((a/b*100).toFixed(1)) : 0;
+
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#64748b';
+const GRID  = {color:'#e2e8f0',drawBorder:false};
+const TICKS = {color:'#64748b',font:{size:11}};
+const SX    = {x:{grid:{display:false},ticks:TICKS},y:{grid:GRID,ticks:TICKS,border:{display:false}}};
+
+function badge(txt,cls){ return `<span class="badge ${cls}">${txt}</span>`; }
+function dot(f){ return `<span class="dot" style="background:${FCOL[f]||'#94a3b8'}"></span>`; }
+
+// ═══ AGGREGATE ═══════════════════════════════════════════
+function agg(){
+  // CRIADO aggregation
+  let leads_sdr=0, meetings=0, sdr_perdido=0, sdr_ativo=0;
+  let leads_by_f={}, mtgs_by_f={}, perdido_by_f={};
+  let motivos_g={}, motivos_bf={};
+  let visibleMonths = MONTHS.filter(m=>selCriado.includes(m));
+
+  const allFontesSelected = selFontes.length === FONTES.length;
+  const mainFontesWithData = ["Google Ads","Facebook Ads","WhatsApp TLJ","Implementation App"];
+
+  visibleMonths.forEach(ym=>{
+    const d = DC[ym];
+    // Sum only selected fontes
+    const sf = selFontes;
+    leads_sdr  += sf.reduce((s,f)=>s+(d.leads_by_fonte[f]  ||0),0);
+    meetings   += sf.reduce((s,f)=>s+(d.meetings_by_fonte[f]||0),0);
+    sdr_perdido+= sf.reduce((s,f)=>s+(d.perdido_by_fonte[f] ||0),0);
+    // ativo = leads - perdido for selected fontes
+    const leads_sel = sf.reduce((s,f)=>s+(d.leads_by_fonte[f]||0),0);
+    const perd_sel  = sf.reduce((s,f)=>s+(d.perdido_by_fonte[f]||0),0);
+    sdr_ativo += Math.max(0, leads_sel - perd_sel);
+
+    FONTES.forEach(f=>{
+      leads_by_f[f]   = (leads_by_f[f]  ||0)+(d.leads_by_fonte[f]  ||0);
+      mtgs_by_f[f]    = (mtgs_by_f[f]   ||0)+(d.meetings_by_fonte[f]||0);
+      perdido_by_f[f] = (perdido_by_f[f]||0)+(d.perdido_by_fonte[f] ||0);
+    });
+
+    // Motivos: if fonte filter active, aggregate only selected fontes that have data
+    if(allFontesSelected){
+      Object.entries(d.motivos_geral||{}).forEach(([k,v])=>{ motivos_g[k]=(motivos_g[k]||0)+v; });
+    } else {
+      sf.forEach(fg=>{
+        if(mainFontesWithData.includes(fg)){
+          Object.entries((d.motivos_by_fonte||{})[fg]||{}).forEach(([k,v])=>{
+            motivos_g[k]=(motivos_g[k]||0)+v;
+          });
+        }
+      });
+    }
+    mainFontesWithData.forEach(fg=>{
+      if(!motivos_bf[fg]) motivos_bf[fg]={};
+      Object.entries((d.motivos_by_fonte||{})[fg]||{}).forEach(([k,v])=>{
+        motivos_bf[fg][k]=(motivos_bf[fg][k]||0)+v;
+      });
+    });
+  });
+
+  // TERMINO aggregation
+  let ganhos=0, perdidos_cls=0, inv_total=0, inv_g=0, inv_fb=0, inv_wa=0;
+  let ganhos_by_f={}, perdidos_by_f={};
+  let visibleTermino = MONTHS.filter(m=>selTermino.includes(m));
+
+  visibleTermino.forEach(ym=>{
+    const d = DT[ym];
+    // When fonte filter is active, sum only selected fontes for ganhos/perdidos
+    ganhos      += selFontes.reduce((s,f)=>s+(d.ganhos_by_fonte[f]  ||0),0);
+    perdidos_cls+= selFontes.reduce((s,f)=>s+(d.perdidos_by_fonte[f]||0),0);
+    // Investment: sum only the inv lines matching selected fontes (others have no tracked inv)
+    const invForFontes = selFontes.reduce((s,f)=>{
+      const key = FONTE_INV_MAP[f];
+      return s + (key ? (d[key]||0) : 0);
+    }, 0);
+    inv_total += allFontesSelected ? d.inv_total : invForFontes;
+    inv_g  += d.inv_google;
+    inv_fb += d.inv_facebook;
+    inv_wa += d.inv_whatsapp;
+    FONTES.forEach(f=>{
+      ganhos_by_f[f]   = (ganhos_by_f[f]  ||0)+(d.ganhos_by_fonte[f]  ||0);
+      perdidos_by_f[f] = (perdidos_by_f[f]||0)+(d.perdidos_by_fonte[f] ||0);
+    });
+  });
+
+  return {
+    leads_sdr, meetings, sdr_perdido, sdr_ativo,
+    ganhos, perdidos_cls, inv_total, inv_g, inv_fb, inv_wa,
+    leads_by_f, mtgs_by_f, perdido_by_f,
+    ganhos_by_f, perdidos_by_f,
+    motivos_g, motivos_bf,
+    visibleMonths, visibleTermino,
+  };
+}
+
+// ═══ RECOMPUTE ════════════════════════════════════════════
+function recompute(){
+  const A = agg();
+
+  // filter note
+  const isFiltered = selCriado.length<MONTHS.length || selTermino.length<MONTHS.length || selFontes.length<FONTES.length;
+  document.getElementById('filterNote').classList.toggle('show', isFiltered);
+
+  // ── KPIs Geral
+  const txR = pctN(A.meetings, A.leads_sdr);
+  set('kLeadsSdr', A.leads_sdr);
+  set('kMeetings', A.meetings);
+  set('kTxReuniao', txR.toFixed(1)+'%', txR>=20?'green':txR>=10?'warn':'red');
+  set('kGanhos', A.ganhos);
+  set('kInv', fmtRK(A.inv_total));
+
+  // alert
+  const alertMsg = A.leads_sdr>0
+    ? `<span class="alert-icon">⚠️</span><div><strong>Período selecionado:</strong> ${A.leads_sdr} leads SDR, ${A.meetings} reuniões, taxa de conversão em reunião <strong>${txR.toFixed(1)}%</strong>. ${A.ganhos} ganhos fechados nos meses de término selecionados.</div>`
+    : `<span class="alert-icon">ℹ️</span><div>Nenhum dado para os filtros selecionados.</div>`;
+  document.getElementById('alertGeral').innerHTML = alertMsg;
+  document.getElementById('alertGeral').className = 'alert ' + (txR>=20?'alert-b':txR>=10?'alert-o':'alert-r');
+
+  // ── Chart Volume (Geral)
+  const vm = A.visibleMonths;
+  const vmLabels = vm.map(m=>LABELS[m]+(m==='2026-06'?' *':''));
+  destroyChart('vol');
+  charts.vol = new Chart(document.getElementById('chartVol'),{type:'bar',data:{
+    labels:vmLabels,
+    datasets:[
+      {label:'Leads SDR',data:vm.map(m=>DC[m].leads_sdr),
+       backgroundColor:vm.map((_,i)=>i===vm.length-1?'#3374B5':'#3374B566'),borderRadius:5},
+      {label:'Reuniões',data:vm.map(m=>DC[m].meetings),
+       backgroundColor:vm.map((_,i)=>i===vm.length-1?'#f97316':'#f9731666'),borderRadius:5},
+    ]
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'top'}},scales:SX}});
+  document.getElementById('noteVol').textContent = vm.includes('2026-06') ? '* Jun/26 parcial até 20/06' : '';
+
+  // ── Chart Taxa (Geral)
+  destroyChart('tx');
+  charts.tx = new Chart(document.getElementById('chartTx'),{type:'line',data:{
+    labels:vmLabels,
+    datasets:[{label:'Taxa Conv. Reunião (%)',
+      data:vm.map(m=>pctN(DC[m].meetings,DC[m].leads_sdr)),
+      borderColor:'#E31E24',backgroundColor:'#E31E2418',borderWidth:2.5,
+      pointBackgroundColor:'#E31E24',pointRadius:5,fill:true,tension:.35}]
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{display:false}},
+    scales:{...SX,y:{...SX.y,beginAtZero:true,max:50,
+      ticks:{...TICKS,callback:v=>v+'%'}}}}});
+
+  // ── Chart Fonte Conv (Geral)
+  const fConvData = FONTES.map(f=>({f,tx:pctN(A.mtgs_by_f[f]||0,A.leads_by_f[f]||0)}))
+    .filter(d=>(A.leads_by_f[d.f]||0)>=3)
+    .sort((a,b)=>b.tx-a.tx);
+  destroyChart('fonteConv');
+  charts.fonteConv = new Chart(document.getElementById('chartFonteConv'),{type:'bar',data:{
+    labels:fConvData.map(d=>d.f),
+    datasets:[{label:'Taxa Conv. (%)',data:fConvData.map(d=>d.tx),
+      backgroundColor:fConvData.map(d=>FCOL[d.f]||'#94a3b8'),borderRadius:5}]
+  },options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:GRID,ticks:{...TICKS,callback:v=>v+'%'}},
+            y:{grid:{display:false},ticks:{...TICKS,font:{size:12}}}}}});
+
+  // ── Table Geral Fonte
+  const rows = FONTES.map(f=>{
+    const l=A.leads_by_f[f]||0,m=A.mtgs_by_f[f]||0,g=A.ganhos_by_f[f]||0;
+    if(l===0&&m===0) return null;
+    const txRf=pctN(m,l),txCf=pctN(g,m);
+    const badge_r = txRf>=20?'bg':txRf>=10?'bo':'br';
+    const badge_c = txCf>=25?'bg':txCf>=10?'bo':txCf>0?'br':'bgy';
+    return `<tr>
+      <td>${dot(f)}<strong>${f}</strong></td>
+      <td class="r">${l}</td><td class="r">${m}</td>
+      <td class="r">${badge(txRf.toFixed(1)+'%',badge_r)}</td>
+      <td class="r">${g}</td>
+      <td class="r">${badge(txCf.toFixed(1)+'%',badge_c)}</td>
+    </tr>`;
+  }).filter(Boolean).join('');
+  document.getElementById('tableGeralFonte').innerHTML = `<table>
+    <thead><tr><th>Fonte</th><th class="r">Leads SDR</th><th class="r">Reuniões</th>
+    <th class="r">Tx. Conv. Reunião</th><th class="r">Ganhos</th><th class="r">Tx. Conv. Closer</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+
+  // ──────────────────────────────────────────────────────
+  // SDR TAB
+  // ──────────────────────────────────────────────────────
+  set('sLeads', A.leads_sdr);
+  set('sPerdido', A.sdr_perdido);
+  document.getElementById('sPerdidoPct').textContent = pct(A.sdr_perdido,A.leads_sdr)+' taxa de perda';
+  set('sAtivo', A.sdr_ativo);
+  set('sMtgs', A.meetings);
+  document.getElementById('sMtgsPct').textContent = pct(A.meetings,A.leads_sdr)+' conv. reunião';
+
+  document.getElementById('alertSdr').innerHTML = `<span class="alert-icon">📊</span>
+    <div><strong>Mix de Fontes (Criado em selecionado):</strong>
+    Google Ads representa <strong>${pct(A.leads_by_f['Google Ads']||0,A.leads_sdr)}</strong> dos leads SDR.
+    Facebook Ads: <strong>${pct(A.leads_by_f['Facebook Ads']||0,A.leads_sdr)}</strong>.
+    Taxa de conversão Google→reunião: <strong>${pctN(A.mtgs_by_f['Google Ads']||0,A.leads_by_f['Google Ads']||0).toFixed(1)}%</strong>
+    vs Facebook→reunião: <strong>${pctN(A.mtgs_by_f['Facebook Ads']||0,A.leads_by_f['Facebook Ads']||0).toFixed(1)}%</strong>.
+    </div>`;
+
+  // SDR stacked
+  destroyChart('sdrStack');
+  charts.sdrStack = new Chart(document.getElementById('chartSdrStack'),{type:'bar',data:{
+    labels:vmLabels,
+    datasets:selFontes.map(f=>({
+      label:f,data:vm.map(m=>DC[m].leads_by_fonte[f]||0),
+      backgroundColor:FCOL[f]||'#94a3b8',borderRadius:3
+    }))
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,boxHeight:10,padding:12}}},
+    scales:{x:{stacked:true,grid:{display:false},ticks:TICKS},
+            y:{stacked:true,grid:GRID,ticks:TICKS,border:{display:false}}}}});
+
+  // SDR mix %
+  destroyChart('sdrMix');
+  charts.sdrMix = new Chart(document.getElementById('chartSdrMix'),{type:'bar',data:{
+    labels:vmLabels,
+    datasets:selFontes.map(f=>({
+      label:f,
+      data:vm.map(m=>{
+        const base = selFontes.reduce((s,ff)=>s+(DC[m].leads_by_fonte[ff]||0),0);
+        return pctN(DC[m].leads_by_fonte[f]||0,base);
+      }),
+      backgroundColor:FCOL[f]||'#94a3b8',borderRadius:3
+    }))
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,boxHeight:10,padding:12}}},
+    scales:{x:{stacked:true,grid:{display:false},ticks:TICKS},
+            y:{stacked:true,grid:GRID,max:100,border:{display:false},
+               ticks:{...TICKS,callback:v=>v+'%'}}}}});
+
+  // SDR fonte table
+  const sdrRows = FONTES.map(f=>{
+    const l=A.leads_by_f[f]||0; if(l===0) return null;
+    const m=A.mtgs_by_f[f]||0,p=A.perdido_by_f[f]||0;
+    const txR=pctN(m,l),txP=pctN(p,l);
+    const monthly = vm.map(mo=>`<td class="r">${DC[mo].leads_by_fonte[f]||0}</td>`).join('');
+    return `<tr><td>${dot(f)}<strong>${f}</strong></td>${monthly}
+      <td class="r b">${l}</td><td class="r">${m}</td>
+      <td class="r">${badge(txR.toFixed(1)+'%',txR>=20?'bg':txR>=10?'bo':'br')}</td>
+      <td class="r">${txP.toFixed(1)}%</td></tr>`;
+  }).filter(Boolean).join('');
+  const sdrMonthHeaders = vm.map(m=>`<th class="r">${LABELS[m]}</th>`).join('');
+  document.getElementById('tableSdrFonte').innerHTML = `<table>
+    <thead><tr><th>Fonte</th>${sdrMonthHeaders}<th class="r">Total</th>
+    <th class="r">Reuniões</th><th class="r">Tx. Conv.</th><th class="r">Tx. Perda SDR</th></tr></thead>
+    <tbody>${sdrRows}</tbody></table>`;
+
+  // Motivos geral
+  renderMotivos('motivosGeral', A.motivos_g, '#3374B5');
+  renderMotivos('mGoogle',   A.motivos_bf['Google Ads']||{},   '#3374B5');
+  renderMotivos('mFacebook', A.motivos_bf['Facebook Ads']||{}, '#1877F2');
+  renderMotivos('mWhatsapp', A.motivos_bf['WhatsApp TLJ']||{}, '#25D366');
+  renderMotivos('mImpl',     A.motivos_bf['Implementation App']||{}, '#8b5cf6');
+
+  // ──────────────────────────────────────────────────────
+  // CLOSER TAB
+  // ──────────────────────────────────────────────────────
+  const vtLabels = A.visibleTermino.map(m=>LABELS[m]+(m==='2026-06'?' *':''));
+  set('cMtgs', A.meetings);
+  set('cGanhos', A.ganhos);
+  document.getElementById('cGanhosPct').textContent = pct(A.ganhos,A.meetings)+' das reuniões';
+  set('cPerdidos', A.perdidos_cls);
+  const txFech = pctN(A.ganhos, A.ganhos+A.perdidos_cls);
+  set('cTxFech', txFech.toFixed(1)+'%', txFech>=30?'green':txFech>=15?'warn':'red');
+
+  destroyChart('closerStack');
+  charts.closerStack = new Chart(document.getElementById('chartCloserStack'),{type:'bar',data:{
+    labels:vmLabels,
+    datasets:selFontes.map(f=>({
+      label:f,data:vm.map(m=>DC[m].meetings_by_fonte[f]||0),
+      backgroundColor:FCOL[f]||'#94a3b8',borderRadius:3
+    }))
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,boxHeight:10,padding:12}}},
+    scales:{x:{stacked:true,grid:{display:false},ticks:TICKS},
+            y:{stacked:true,grid:GRID,ticks:TICKS,border:{display:false}}}}});
+
+  destroyChart('gp');
+  charts.gp = new Chart(document.getElementById('chartGP'),{type:'bar',data:{
+    labels:vtLabels,
+    datasets:[
+      {label:'Ganhos',data:A.visibleTermino.map(m=>DT[m].ganhos),backgroundColor:'#22c55e',borderRadius:4},
+      {label:'Perdidos',data:A.visibleTermino.map(m=>DT[m].perdidos),backgroundColor:'#E31E24',borderRadius:4},
+    ]
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'top'}},scales:{...SX,y:{...SX.y,beginAtZero:true}}}});
+
+  // Closer fonte table
+  const closerRows = FONTES.map(f=>{
+    const m=A.mtgs_by_f[f]||0,g=A.ganhos_by_f[f]||0,p=A.perdidos_by_f[f]||0,ab=EM_AB[f]||0;
+    if(m===0&&g===0) return null;
+    const txC=pctN(g,m);
+    const mtgMonthly = vm.map(mo=>`<td class="r">${DC[mo].meetings_by_fonte[f]||0}</td>`).join('');
+    return `<tr><td>${dot(f)}<strong>${f}</strong></td>${mtgMonthly}
+      <td class="r b">${m}</td>
+      <td class="r" style="color:#16a34a;font-weight:700">${g}</td>
+      <td class="r" style="color:#E31E24">${p}</td>
+      <td class="r" style="color:#64748b">${ab}</td>
+      <td class="r">${badge(txC.toFixed(1)+'%',txC>=25?'bg':txC>=10?'bo':txC>0?'br':'bgy')}</td></tr>`;
+  }).filter(Boolean).join('');
+  const closerMonthH = vm.map(m=>`<th class="r">${LABELS[m]}</th>`).join('');
+  document.getElementById('tableCloserFonte').innerHTML = `<table>
+    <thead><tr><th>Fonte</th>${closerMonthH}<th class="r">Total Reuniões</th>
+    <th class="r">Ganhos</th><th class="r">Perdidos</th><th class="r">Em Aberto</th>
+    <th class="r">Tx. Conv.</th></tr></thead>
+    <tbody>${closerRows}</tbody></table>`;
+
+  document.getElementById('alertCloserDestaques').innerHTML =
+    `<strong>Destaques:</strong> Google Ads gerou ${A.ganhos_by_f['Google Ads']||0} dos ${A.ganhos} ganhos (${pct(A.ganhos_by_f['Google Ads']||0,A.ganhos)}) no período selecionado. Facebook Ads: ${A.ganhos_by_f['Facebook Ads']||0} ganhos. WhatsApp TLJ: ${A.ganhos_by_f['WhatsApp TLJ']||0} ganhos. Em Aberto: 30 leads (estado atual, não filtrado por mês).`;
+
+  // ──────────────────────────────────────────────────────
+  // INVESTIMENTOS TAB
+  // ──────────────────────────────────────────────────────
+  const cpl = A.leads_sdr>0 ? A.inv_total/A.leads_sdr : null;
+  const cpM = A.meetings>0  ? A.inv_total/A.meetings  : null;
+  const cpS = A.ganhos>0    ? A.inv_total/A.ganhos    : null;
+  set('iInv', fmtRK(A.inv_total));
+  set('iCpl', fmtR(cpl));
+  set('iCpM', fmtR(cpM));
+  set('iCpS', fmtR(cpS));
+
+  destroyChart('invFonte');
+  charts.invFonte = new Chart(document.getElementById('chartInvFonte'),{type:'bar',data:{
+    labels:vtLabels,
+    datasets:[
+      {label:'Google Ads',data:A.visibleTermino.map(m=>DT[m].inv_google),backgroundColor:'#3374B5cc',borderRadius:4},
+      {label:'Meta / Facebook',data:A.visibleTermino.map(m=>DT[m].inv_facebook),backgroundColor:'#1877F2cc',borderRadius:4},
+      {label:'WhatsApp API',data:A.visibleTermino.map(m=>DT[m].inv_whatsapp),backgroundColor:'#25D36699',borderRadius:4},
+    ]
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'bottom'}},
+    scales:{x:{stacked:true,grid:{display:false},ticks:TICKS},
+            y:{stacked:true,grid:GRID,border:{display:false},
+               ticks:{...TICKS,callback:v=>'R$'+v.toLocaleString('pt-BR')}}}}});
+
+  destroyChart('custos');
+  charts.custos = new Chart(document.getElementById('chartCustos'),{type:'line',data:{
+    labels:vtLabels,
+    datasets:[
+      {label:'CPL (R$)',data:A.visibleTermino.map(m=>{
+        const inv=DT[m].inv_total,l=DC[m]?.leads_sdr||0; return l>0?parseFloat((inv/l).toFixed(2)):null;
+      }),borderColor:'#3374B5',pointBackgroundColor:'#3374B5',borderWidth:2,pointRadius:5,tension:.3,yAxisID:'y'},
+      {label:'Custo/Reunião (R$)',data:A.visibleTermino.map(m=>{
+        const inv=DT[m].inv_total,mt=DC[m]?.meetings||0; return mt>0?parseFloat((inv/mt).toFixed(2)):null;
+      }),borderColor:'#f97316',pointBackgroundColor:'#f97316',borderWidth:2,pointRadius:5,tension:.3,yAxisID:'y2'},
+    ]
+  },options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{position:'top'}},
+    scales:{
+      x:{grid:{display:false},ticks:TICKS},
+      y:{position:'left',grid:GRID,border:{display:false},ticks:{...TICKS,callback:v=>'R$'+v}},
+      y2:{position:'right',grid:{display:false},border:{display:false},ticks:{...TICKS,callback:v=>'R$'+v}}
+    }}});
+
+  // Table inv por mês
+  const invMesRows = A.visibleTermino.map(m=>{
+    const d=DT[m],l=DC[m]?.leads_sdr||0,mt=DC[m]?.meetings||0;
+    const cpl2=l>0?d.inv_total/l:null,cpm2=mt>0?d.inv_total/mt:null,cps2=d.ganhos>0?d.inv_total/d.ganhos:null;
+    const cpmBadge = cpm2==null?'—':badge(fmtR(cpm2),cpm2<300?'bg':cpm2<600?'bo':'br');
+    const cpsBadge = cps2==null?badge('—','bgy'):badge(fmtRK(cps2),cps2<2000?'bg':cps2<5000?'bo':'br');
+    return `<tr><td><strong>${LABELS[m]}</strong></td>
+      <td class="r">${fmtRK(d.inv_total)}</td>
+      <td class="r">${l}</td><td class="r">${mt}</td><td class="r">${d.ganhos}</td>
+      <td class="r">${fmtR(cpl2)}</td><td class="r">${cpmBadge}</td><td class="r">${cpsBadge}</td></tr>`;
+  }).join('');
+  document.getElementById('tableInvMes').innerHTML = `<table>
+    <thead><tr><th>Mês</th><th class="r">Investimento</th><th class="r">Leads SDR</th>
+    <th class="r">Reuniões</th><th class="r">Ganhos</th>
+    <th class="r">CPL</th><th class="r">Custo/Reunião</th><th class="r">Custo/Venda</th></tr></thead>
+    <tbody>${invMesRows}</tbody></table>`;
+
+  // Table Google / Facebook granular
+  const gRows = A.visibleTermino.map(m=>{
+    const inv=DT[m].inv_google,l=DC[m]?.leads_by_fonte['Google Ads']||0,
+          mt=DC[m]?.meetings_by_fonte['Google Ads']||0,g=DT[m].ganhos_by_fonte['Google Ads']||0;
+    return `<tr><td>${LABELS[m]}</td>
+      <td class="r">${fmtRK(inv)}</td><td class="r">${l}</td><td class="r">${mt}</td><td class="r">${g}</td>
+      <td class="r">${l>0?fmtR(inv/l):'—'}</td>
+      <td class="r">${mt>0?badge(fmtR(inv/mt),inv/mt<400?'bg':inv/mt<800?'bo':'br'):'—'}</td>
+      <td class="r">${g>0?fmtRK(inv/g):'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('tableInvGoogle').innerHTML = `<table>
+    <thead><tr><th>Mês</th><th class="r">Inv. Google</th><th class="r">Leads</th>
+    <th class="r">Reuniões</th><th class="r">Ganhos</th>
+    <th class="r">CPL</th><th class="r">Custo/Reunião</th><th class="r">Custo/Venda</th></tr></thead>
+    <tbody>${gRows}</tbody></table>`;
+
+  const fbRows = A.visibleTermino.map(m=>{
+    const inv=DT[m].inv_facebook,l=DC[m]?.leads_by_fonte['Facebook Ads']||0,
+          mt=DC[m]?.meetings_by_fonte['Facebook Ads']||0,g=DT[m].ganhos_by_fonte['Facebook Ads']||0;
+    return `<tr><td>${LABELS[m]}</td>
+      <td class="r">${fmtRK(inv)}</td><td class="r">${l}</td><td class="r">${mt}</td><td class="r">${g}</td>
+      <td class="r">${l>0?fmtR(inv/l):'—'}</td>
+      <td class="r">${mt>0?fmtR(inv/mt):'—'}</td>
+      <td class="r">${g>0?fmtRK(inv/g):'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('tableInvFacebook').innerHTML = `<table>
+    <thead><tr><th>Mês</th><th class="r">Inv. Facebook</th><th class="r">Leads</th>
+    <th class="r">Reuniões</th><th class="r">Ganhos</th>
+    <th class="r">CPL</th><th class="r">Custo/Reunião</th><th class="r">Custo/Venda</th></tr></thead>
+    <tbody>${fbRows}</tbody></table>`;
+}
+
+// ═══ MOTIVOS HELPER ═══════════════════════════════════════
+function renderMotivos(id, data, color){
+  const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const max = sorted[0]?.[1]||1;
+  document.getElementById(id).innerHTML = sorted.length===0
+    ? '<div style="color:#94a3b8;font-size:13px;padding:8px 0">Sem dados para o período selecionado</div>'
+    : sorted.map(([k,v])=>`
+      <div class="mbar">
+        <span class="mlbl" title="${k}">${k}</span>
+        <div class="mtrack"><div class="mfill" style="width:${Math.round(v/max*100)}%;background:${color}"></div></div>
+        <span class="mcount">${v}</span>
+      </div>`).join('');
+}
+
+// ═══ FILTER PILLS ════════════════════════════════════════
+function set(id, val, cls){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = val;
+  if(cls) el.className = 'kpi-val ' + cls;
+}
+
+function buildPills(){
+  ['pillsCriado','pillsTermino'].forEach(pid=>{
+    const isCriado = pid==='pillsCriado';
+    const sel = isCriado ? selCriado : selTermino;
+    const cls = isCriado ? 'sel-criado' : 'sel-termino';
+    const type = isCriado ? 'c' : 't';
+    document.getElementById(pid).innerHTML = MONTHS.map(m=>
+      `<span class="fpill ${sel.includes(m)?cls:''}" onclick="togglePill('${m}','${type}')">${LABELS[m]}</span>`
+    ).join('');
+  });
+  // Fonte pills
+  document.getElementById('pillsFonte').innerHTML = FONTES.map(f=>
+    `<span class="fpill ${selFontes.includes(f)?'sel-fonte':''}" onclick="togglePill('${f}','f')">${FONTE_LABELS[f]||f}</span>`
+  ).join('');
+}
+
+function togglePill(val, type){
+  if(type==='c'){
+    if(selCriado.includes(val)){
+      if(selCriado.length===1) return;
+      selCriado = selCriado.filter(x=>x!==val);
+    } else { selCriado = [...selCriado,val].sort(); }
+  } else if(type==='t'){
+    if(selTermino.includes(val)){
+      if(selTermino.length===1) return;
+      selTermino = selTermino.filter(x=>x!==val);
+    } else { selTermino = [...selTermino,val].sort(); }
+  } else { // fonte
+    if(selFontes.includes(val)){
+      if(selFontes.length===1) return;
+      selFontes = selFontes.filter(x=>x!==val);
+    } else { selFontes = [...selFontes,val]; }
+  }
+  buildPills();
+  recompute();
+}
+
+function resetFilters(){
+  selCriado  = [...MONTHS];
+  selTermino = [...MONTHS];
+  selFontes  = [...FONTES];
+  buildPills();
+  recompute();
+}
+
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ═══ INIT ════════════════════════════════════════════════
+buildPills();
+recompute();
+</script>
+</body>
+</html>
